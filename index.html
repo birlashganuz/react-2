@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>React-1 17.04.2024:vazifa</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+
+        function App() {
+            const addNote = document.querySelector('.addNote')
+            const noteTitle = document.querySelector('.noteTitle')
+            const [text, setText] = React.useState('')
+            const [array, setArray] = React.useState([
+                { id: Math.random(), name: "React", time: new Date().toLocaleDateString() },
+                { id: Math.random(), name: "JS", time: new Date().toLocaleDateString() },
+                { id: Math.random(), name: "CSS", time: new Date().toLocaleDateString() }
+            ])
+            const confirm = (e) => {
+                e.preventDefault()
+                if (addNote.getAttribute('data-type') == "add") {
+                    if (text.length >= 2) {
+                        setArray(
+                            [...array, { id: Math.random(), name: text, time: new Date().toLocaleDateString() }]
+                        )
+                        setText('')
+                    }
+                } else if (addNote.getAttribute('data-type') == "edit") {
+                    console.log(noteTitle.getAttribute("data-editid"));
+                }
+            }
+
+            const delCard = (id) => { setArray(array.filter(value => value.id != id)) }
+            const editCard = (id) => {
+
+                for (const key in array) {
+                    if (array[key].id == id) {
+                        setText(array[key].name)
+                        noteTitle.setAttribute("data-editid", id);
+                        addNote.innerHTML = "Edit";
+                        addNote.setAttribute("data-type", "edit");
+                    }
+                }
+            }
+            return (
+                <div className="container">
+                    <h1>TodoList</h1>
+                    <form onSubmit={(e) => confirm(e)}>
+                        <input type="text" value={text} onChange={(e) => setText(e.target.value)} className="noteTitle" />
+                        <button className="addNote" data-type="add">add Note</button>
+                    </form>
+                    <div className="box">
+                        {array.map(value => (
+                            <div key={value.id} className="card">
+                                <h2>{value.name}</h2>
+                                <h2>{value.time}</h2>
+                                <button className="delete" onClick={(e) => delCard(value.id)}>X</button>
+                                <button className="edit" onClick={(e) => editCard(value.id)}>E</button>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )
+        }
+
+        const app = document.getElementById('root')
+        const root = ReactDOM.createRoot(app)
+        root.render(<App />)
+
+    </script>
+</body>
+
+</html>
